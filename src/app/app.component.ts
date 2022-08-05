@@ -1,5 +1,5 @@
 import { Component, VERSION } from '@angular/core';
-import { of, from } from 'rxjs';
+import { of, from, map, tap, take } from 'rxjs';
 
 @Component({
   selector: 'my-app',
@@ -30,5 +30,26 @@ export class AppComponent {
       error: (err) => console.error(`An ${err} occurred`),
       complete: () => console.log('Exercise 1b Complete.'),
     });
+
+    /**Operator practice 8/4/2022 */
+    from([20, 15, 10, 5])
+      .pipe(
+        tap((item) => console.log(`emitted item is ${item}`)),
+        map((item) => item * 2),
+        map((item) => item - 10),
+        map((item) => {
+          if (item === 0) {
+            throw new Error('zero detected');
+          }
+          return item; //one line error functions have implied return, multi line require explicit return statement
+        }),
+        tap((item) => console.log(`final emitted item is ${item}`)),
+        take(3) //error won't occur if this line is added
+      )
+      .subscribe({
+        next: (item) => console.log(`Result of map sequence is  ${item}`),
+        error: (err) => console.error(`An ${err} occurred`),
+        complete: () => console.log('Operator Exercise Complete.'),
+      });
   }
 }
